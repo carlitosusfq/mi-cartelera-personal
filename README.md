@@ -4,7 +4,7 @@ Aplicación web desarrollada con React, TypeScript y Vite que permite buscar pel
 
 ## Descripción
 
-Mi Cartelera Personal es un proyecto académico de Desarrollo Web 2 que integra una API externa (TMDB), autenticación de usuarios mediante Supabase Auth y almacenamiento de datos en PostgreSQL.
+Mi Cartelera Personal es un proyecto que integra una API externa (TMDB), autenticación de usuarios mediante Supabase Auth y almacenamiento de datos en PostgreSQL.
 
 Cada usuario puede administrar una colección privada de películas y series, registrando estados de visualización, calificaciones y comentarios personales.
 
