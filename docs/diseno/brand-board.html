@@ -1,0 +1,306 @@
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brand Board — Mi Cartelera Personal</title>
+
+  <style>
+    :root {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #ffffff;
+      background: #141419;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px 24px;
+    }
+
+    .contenedor {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      margin-top: 48px;
+      margin-bottom: 24px;
+    }
+
+    p {
+      color: #aaaab5;
+      line-height: 1.6;
+    }
+
+    .marca {
+      color: #e50914;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(
+        auto-fit,
+        minmax(180px, 1fr)
+      );
+      gap: 20px;
+    }
+
+    .tarjeta {
+      background: #202027;
+      border: 1px solid #30303a;
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .muestra {
+      height: 90px;
+      border-radius: 10px;
+      border: 1px solid #40404a;
+      margin-bottom: 14px;
+    }
+
+    .nombre {
+      color: white;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .codigo {
+      color: #aaaab5;
+      font-size: 13px;
+    }
+
+    .boton {
+      background: #e50914;
+      border: none;
+      color: white;
+      padding: 12px 22px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .boton:hover {
+      background: #b20710;
+    }
+
+    .boton-secundario {
+      background: #40404a;
+    }
+
+    .boton-secundario:hover {
+      background: #50505b;
+    }
+
+    .campo {
+      width: 100%;
+      padding: 14px;
+      color: white;
+      background: #141419;
+      border: 1px solid #40404a;
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    .campo:focus {
+      outline: 2px solid #e50914;
+      outline-offset: 2px;
+    }
+
+    .ejemplo {
+      max-width: 500px;
+    }
+
+    .fila {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .estado {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: #363640;
+      font-size: 13px;
+    }
+
+    .exito {
+      color: #69d49a;
+    }
+
+    .error {
+      color: #ff7777;
+    }
+
+    footer {
+      margin-top: 60px;
+      border-top: 1px solid #30303a;
+      padding-top: 24px;
+      color: #aaaab5;
+      font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 24px 16px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="contenedor">
+    <header>
+      <h1>🎬 Mi <span class="marca">Cartelera</span></h1>
+      <p>Brand Board · Sistema de diseño del proyecto</p>
+      <p>
+        Referencia visual para el Proyecto 3 y la nueva
+        funcionalidad Noche de película.
+      </p>
+    </header>
+
+    <section>
+      <h2>01. Paleta de colores</h2>
+
+      <div class="grid">
+        <div class="tarjeta">
+          <div class="muestra" style="background:#141419"></div>
+          <div class="nombre">Fondo principal</div>
+          <div class="codigo">#141419</div>
+        </div>
+
+        <div class="tarjeta">
+          <div class="muestra" style="background:#202027"></div>
+          <div class="nombre">Superficies</div>
+          <div class="codigo">#202027</div>
+        </div>
+
+        <div class="tarjeta">
+          <div class="muestra" style="background:#e50914"></div>
+          <div class="nombre">Rojo principal</div>
+          <div class="codigo">#E50914</div>
+        </div>
+
+        <div class="tarjeta">
+          <div class="muestra" style="background:#30303a"></div>
+          <div class="nombre">Bordes</div>
+          <div class="codigo">#30303A</div>
+        </div>
+
+        <div class="tarjeta">
+          <div class="muestra" style="background:#aaaab5"></div>
+          <div class="nombre">Texto secundario</div>
+          <div class="codigo">#AAAAB5</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>02. Tipografía</h2>
+
+      <div class="tarjeta">
+        <h1>Arial — Título principal</h1>
+        <h2>Encabezado de sección</h2>
+        <p>
+          Texto secundario utilizado para descripciones,
+          instrucciones y mensajes informativos.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2>03. Botones y estados</h2>
+
+      <div class="tarjeta">
+        <div class="fila">
+          <button class="boton">Guardar sesión</button>
+          <button class="boton boton-secundario">
+            Cancelar
+          </button>
+        </div>
+
+        <div class="fila">
+          <span class="estado">Por ver</span>
+          <span class="estado">Viendo</span>
+          <span class="estado">Vista</span>
+        </div>
+
+        <p class="exito">Sesión guardada correctamente.</p>
+        <p class="error">La película no cabe en el tiempo restante.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>04. Formularios</h2>
+
+      <div class="tarjeta ejemplo">
+        <label for="tiempo">Tiempo disponible (minutos)</label>
+
+        <div style="margin-top:12px">
+          <input
+            class="campo"
+            id="tiempo"
+            type="number"
+            min="30"
+            max="600"
+            value="180"
+          />
+        </div>
+
+        <p>Introduce un número entero entre 30 y 600.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>05. Componentes para Noche de película</h2>
+
+      <div class="grid">
+        <article class="tarjeta">
+          <h3>🎞️ Películas disponibles</h3>
+          <p>
+            Lista de películas por ver con duración
+            obtenida desde TMDB.
+          </p>
+        </article>
+
+        <article class="tarjeta">
+          <h3>⏱️ Duración de la sesión</h3>
+          <p>
+            Tiempo total incluyendo pausas de
+            10 minutos entre películas.
+          </p>
+        </article>
+
+        <article class="tarjeta">
+          <h3>💾 Sesiones guardadas</h3>
+          <p>
+            Consulta de sesiones personales
+            almacenadas en Supabase.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      Mi Cartelera Personal · Referencia visual de diseño.
+      La implementación de E2 seguirá DESIGN.md.
+    </footer>
+  </main>
+</body>
+</html>
