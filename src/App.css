@@ -640,3 +640,181 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ======================================
+   NOCHE DE PELÍCULA
+   ====================================== */
+
+.seccion-noche {
+  margin: 65px 0;
+  padding: 40px 0;
+  border-top: 1px solid #30303a;
+}
+
+.noche-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 600px;
+  padding: 30px;
+  margin: 28px 0 36px;
+  background: #202027;
+  border: 1px solid #30303a;
+  border-radius: 14px;
+}
+
+.noche-formulario label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.noche-formulario input {
+  width: 100%;
+  padding: 14px;
+  background: #141419;
+  color: white;
+  border: 1px solid #40404a;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.noche-formulario input:focus {
+  outline: none;
+  border-color: #e50914;
+}
+
+.noche-formulario p {
+  margin: 8px 0 0;
+  color: #aaaab5;
+}
+
+.noche-peliculas {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(160px, 1fr)
+  );
+  gap: 18px;
+  margin: 24px 0;
+}
+
+.noche-pelicula {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  background: #202027;
+  border: 1px solid #30303a;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.noche-pelicula:hover,
+.noche-pelicula:has(input:checked) {
+  border-color: #e50914;
+}
+
+.noche-pelicula input[type="checkbox"] {
+  accent-color: #e50914;
+  width: 18px;
+  height: 18px;
+}
+
+.noche-pelicula img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.noche-pelicula span {
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.5;
+}
+
+.noche-resumen {
+  margin: 24px 0;
+  color: #dddde5;
+}
+
+.noche-historial {
+  margin-top: 55px;
+  padding-top: 30px;
+  border-top: 1px solid #30303a;
+}
+
+.noche-historial h3 {
+  margin-bottom: 24px;
+}
+
+.noche-sesion {
+  padding: 24px;
+  margin-bottom: 18px;
+  background: #202027;
+  border: 1px solid #30303a;
+  border-radius: 14px;
+}
+
+.noche-sesion h4 {
+  margin: 0 0 14px;
+  font-size: 19px;
+}
+
+.noche-sesion p {
+  color: #aaaab5;
+  line-height: 1.6;
+}
+
+.noche-sesion ol {
+  padding-left: 22px;
+  line-height: 1.9;
+}
+
+@media (max-width: 600px) {
+  .noche-formulario {
+    padding: 20px;
+  }
+
+  .noche-peliculas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+
+/* Resumen de tiempo de Noche de película */
+
+.noche-resumen-tiempo {
+  background: #202027;
+  border: 1px solid #30303a;
+  border-radius: 14px;
+  padding: 24px;
+  margin: 28px 0;
+  max-width: 600px;
+}
+
+.noche-resumen-tiempo h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.noche-resumen-tiempo p {
+  color: #c5c5ce;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.noche-pelicula small {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.noche-disponible {
+  color: #69d49a;
+}
+
+.noche-no-cabe {
+  color: #ff7777;
+}

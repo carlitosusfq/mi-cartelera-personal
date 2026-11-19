@@ -1,13 +1,22 @@
+
 import { useState } from 'react';
 import type { FormEvent } from 'react';
+
 import {
   buscarTitulos,
   obtenerPoster,
 } from '../services/tmdb';
+
 import type { PeliculaTMDB } from '../services/tmdb';
 import { supabase } from '../lib/supabaseClient';
 
-function BuscadorTMDB() {
+interface BuscadorTMDBProps {
+  onColeccionActualizada?: () => void;
+}
+
+function BuscadorTMDB({
+  onColeccionActualizada,
+}: BuscadorTMDBProps) {
   const [busqueda, setBusqueda] = useState('');
   const [resultados, setResultados] = useState<PeliculaTMDB[]>([]);
   const [cargando, setCargando] = useState(false);
@@ -19,49 +28,69 @@ function BuscadorTMDB() {
   async function agregarAMiLista(pelicula: PeliculaTMDB) {
     const identificador = `${pelicula.media_type}-${pelicula.id}`;
 
+    if (guardandoId !== null) return;
+
     setGuardandoId(identificador);
     setMensajeGuardar('');
 
     try {
-      const { data: { user }, error: errorUsuario } =
-        await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: errorUsuario,
+      } = await supabase.auth.getUser();
 
       if (errorUsuario || !user) {
         throw new Error('Debes iniciar sesión para guardar títulos.');
       }
 
-      const { error } = await supabase.from('mi_lista').insert({
-        user_id: user.id,
-        tmdb_id: pelicula.id,
-        titulo: pelicula.title || pelicula.name || 'Sin título',
-        poster_url: obtenerPoster(pelicula.poster_path),
-        tipo_contenido:
-          pelicula.media_type === 'movie' ? 'pelicula' : 'serie',
-        estado: 'por_ver',
-        calificacion_personal: null,
-        comentario: null,
-      });
+      const { error } = await supabase
+        .from('mi_lista')
+        .insert({
+          user_id: user.id,
+          tmdb_id: pelicula.id,
+          titulo: pelicula.title || pelicula.name || 'Sin título',
+          poster_url: obtenerPoster(pelicula.poster_path),
+          tipo_contenido:
+            pelicula.media_type === 'movie'
+              ? 'pelicula'
+              : 'serie',
+          estado: 'por_ver',
+          calificacion_personal: null,
+          comentario: null,
+        });
 
       if (error) {
         if (error.code === '23505') {
-          throw new Error('Esta película o serie ya está en tu lista.');
+          throw new Error(
+            'Esta película o serie ya está en tu lista.',
+          );
         }
+
         throw error;
       }
 
-      setMensajeGuardar('¡Título agregado correctamente a tu lista!');
-    } catch (error) {
       setMensajeGuardar(
-        error instanceof Error
-          ? error.message
-          : 'No se pudo guardar el título.'
+        '¡Título agregado correctamente a tu lista!',
+      );
+
+      // Notificar a App.tsx para actualizar la colección
+      // y la lista de películas de Noche de película.
+      onColeccionActualizada?.();
+
+    } catch (err) {
+      setMensajeGuardar(
+        err instanceof Error
+          ? err.message
+          : 'No se pudo guardar el título.',
       );
     } finally {
       setGuardandoId(null);
     }
   }
-  
-  async function manejarBusqueda(e: FormEvent<HTMLFormElement>) {
+
+  async function manejarBusqueda(
+    e: FormEvent<HTMLFormElement>,
+  ) {
     e.preventDefault();
 
     if (!busqueda.trim() || cargando) return;
@@ -69,15 +98,16 @@ function BuscadorTMDB() {
     setCargando(true);
     setError('');
     setResultados([]);
+    setMensajeGuardar('');
 
     try {
       const peliculas = await buscarTitulos(busqueda.trim());
       setResultados(peliculas);
-    } catch (error) {
+    } catch (err) {
       setError(
-        error instanceof Error
-          ? error.message
-          : 'Ocurrió un error al buscar.'
+        err instanceof Error
+          ? err.message
+          : 'Ocurrió un error al buscar.',
       );
     } finally {
       setCargando(false);
@@ -94,7 +124,10 @@ function BuscadorTMDB() {
         Encuentra tus títulos favoritos en TMDB.
       </p>
 
-      <form className="form-busqueda" onSubmit={manejarBusqueda}>
+      <form
+        className="form-busqueda"
+        onSubmit={manejarBusqueda}
+      >
         <input
           type="search"
           placeholder="Ejemplo: Batman, Interstellar..."
@@ -127,28 +160,40 @@ function BuscadorTMDB() {
 
       {!cargando && !error && resultados.length === 0 && (
         <p className="mensaje-busqueda">
-          Escribe el nombre de una película o serie para comenzar.
+          Escribe el nombre de una película o serie
+          para comenzar.
         </p>
       )}
 
       {mensajeGuardar && (
         <p className="mensaje-busqueda" role="status">
-            {mensajeGuardar}
+          {mensajeGuardar}
         </p>
       )}
 
-
       <div className="grid-peliculas">
         {resultados.map((pelicula) => {
-          const titulo = pelicula.title || pelicula.name || 'Sin título';
+          const titulo =
+            pelicula.title ||
+            pelicula.name ||
+            'Sin título';
+
           const fecha =
-            pelicula.release_date || pelicula.first_air_date || '';
-          const poster = obtenerPoster(pelicula.poster_path);
+            pelicula.release_date ||
+            pelicula.first_air_date ||
+            '';
+
+          const poster = obtenerPoster(
+            pelicula.poster_path,
+          );
+
+          const identificador =
+            `${pelicula.media_type}-${pelicula.id}`;
 
           return (
             <article
               className="pelicula-card"
-              key={`${pelicula.media_type}-${pelicula.id}`}
+              key={identificador}
             >
               {poster ? (
                 <img
@@ -164,7 +209,13 @@ function BuscadorTMDB() {
 
               <div className="pelicula-info">
                 <h3>{titulo}</h3>
-                <p>{fecha ? fecha.slice(0, 4) : 'Sin año'}</p>
+
+                <p>
+                  {fecha
+                    ? fecha.slice(0, 4)
+                    : 'Sin año'}
+                </p>
+
                 <span className="tipo-pelicula">
                   {pelicula.media_type === 'movie'
                     ? 'Película'
@@ -172,18 +223,17 @@ function BuscadorTMDB() {
                 </span>
 
                 <button
-                    className="boton boton-agregar"
-                    type="button"
-                    onClick={() => agregarAMiLista(pelicula)}
-                    disabled={
-                        guardandoId === `${pelicula.media_type}-${pelicula.id}`
-                    }
-                    >
-                    {guardandoId === `${pelicula.media_type}-${pelicula.id}`
-                        ? 'Guardando...'
-                        : '+ Agregar a mi lista'}
+                  className="boton boton-agregar"
+                  type="button"
+                  onClick={() =>
+                    void agregarAMiLista(pelicula)
+                  }
+                  disabled={guardandoId !== null}
+                >
+                  {guardandoId === identificador
+                    ? 'Guardando...'
+                    : '+ Agregar a mi lista'}
                 </button>
-               
               </div>
             </article>
           );

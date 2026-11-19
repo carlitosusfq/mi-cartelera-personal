@@ -1,10 +1,13 @@
+
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { supabase } from './lib/supabaseClient';
 import './App.css';
+
 import BuscadorTMDB from './components/BuscadorTMDB';
 import MiColeccion from './components/MiColeccion';
+import NocheDePelicula from './components/NocheDePelicula';
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -15,6 +18,11 @@ function App() {
   const [contrasena, setContrasena] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [procesando, setProcesando] = useState(false);
+  const [versionColeccion, setVersionColeccion] = useState(0);
+
+  function notificarCambioColeccion() {
+    setVersionColeccion((version) => version + 1);
+  }
 
   useEffect(() => {
     let activo = true;
@@ -27,11 +35,14 @@ function App() {
       setCargandoSesion(false);
     });
 
-    const { data: { subscription } } =
-      supabase.auth.onAuthStateChange((_event, nuevaSesion) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(
+      (_event, nuevaSesion) => {
         setSession(nuevaSesion);
         setCargandoSesion(false);
-      });
+      },
+    );
 
     return () => {
       activo = false;
@@ -39,7 +50,9 @@ function App() {
     };
   }, []);
 
-  async function manejarAutenticacion(e: FormEvent<HTMLFormElement>) {
+  async function manejarAutenticacion(
+    e: FormEvent<HTMLFormElement>,
+  ) {
     e.preventDefault();
     setMensaje('');
     setProcesando(true);
@@ -57,14 +70,15 @@ function App() {
           setMensaje('¡Cuenta creada correctamente!');
         } else {
           setMensaje(
-            'Revisa tu correo electrónico para confirmar tu cuenta.'
+            'Revisa tu correo electrónico para confirmar tu cuenta.',
           );
         }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: correo.trim(),
-          password: contrasena,
-        });
+        const { error } =
+          await supabase.auth.signInWithPassword({
+            email: correo.trim(),
+            password: contrasena,
+          });
 
         if (error) throw error;
       }
@@ -72,7 +86,7 @@ function App() {
       setMensaje(
         error instanceof Error
           ? error.message
-          : 'Ocurrió un error inesperado.'
+          : 'Ocurrió un error inesperado.',
       );
     } finally {
       setProcesando(false);
@@ -81,16 +95,24 @@ function App() {
 
   async function cerrarSesion() {
     setProcesando(true);
-    const { error } = await supabase.auth.signOut();
 
-    if (error) setMensaje(error.message);
-    else {
+    try {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) throw error;
+
       setCorreo('');
       setContrasena('');
       setMensaje('');
+    } catch (error) {
+      setMensaje(
+        error instanceof Error
+          ? error.message
+          : 'No se pudo cerrar la sesión.',
+      );
+    } finally {
+      setProcesando(false);
     }
-
-    setProcesando(false);
   }
 
   if (cargandoSesion) {
@@ -105,9 +127,15 @@ function App() {
     return (
       <main className="pantalla-auth">
         <div className="auth-card">
-          <div className="logo">🎬 Mi <span>Cartelera</span></div>
+          <div className="logo">
+            🎬 Mi <span>Cartelera</span>
+          </div>
 
-          <h1>{esRegistro ? 'Crear cuenta' : 'Bienvenido de nuevo'}</h1>
+          <h1>
+            {esRegistro
+              ? 'Crear cuenta'
+              : 'Bienvenido de nuevo'}
+          </h1>
 
           <p className="auth-descripcion">
             {esRegistro
@@ -116,7 +144,10 @@ function App() {
           </p>
 
           <form onSubmit={manejarAutenticacion}>
-            <label htmlFor="correo">Correo electrónico</label>
+            <label htmlFor="correo">
+              Correo electrónico
+            </label>
+
             <input
               id="correo"
               type="email"
@@ -127,15 +158,22 @@ function App() {
               required
             />
 
-            <label htmlFor="contrasena">Contraseña</label>
+            <label htmlFor="contrasena">
+              Contraseña
+            </label>
+
             <input
               id="contrasena"
               type="password"
               placeholder="Mínimo 6 caracteres"
               value={contrasena}
-              onChange={(e) => setContrasena(e.target.value)}
+              onChange={(e) =>
+                setContrasena(e.target.value)
+              }
               autoComplete={
-                esRegistro ? 'new-password' : 'current-password'
+                esRegistro
+                  ? 'new-password'
+                  : 'current-password'
               }
               minLength={6}
               required
@@ -155,11 +193,19 @@ function App() {
           </form>
 
           {mensaje && (
-            <p className="mensaje-auth" role="status">{mensaje}</p>
+            <p
+              className="mensaje-auth"
+              role="status"
+            >
+              {mensaje}
+            </p>
           )}
 
           <p className="cambiar-auth">
-            {esRegistro ? '¿Ya tienes una cuenta?' : '¿No tienes cuenta?'}
+            {esRegistro
+              ? '¿Ya tienes una cuenta?'
+              : '¿No tienes cuenta?'}
+
             <button
               type="button"
               onClick={() => {
@@ -167,7 +213,9 @@ function App() {
                 setMensaje('');
               }}
             >
-              {esRegistro ? 'Iniciar sesión' : 'Registrarme'}
+              {esRegistro
+                ? 'Iniciar sesión'
+                : 'Registrarme'}
             </button>
           </p>
         </div>
@@ -177,6 +225,7 @@ function App() {
 
   return (
     <div className="contenedor">
+      {/* ENCABEZADO */}
       <header className="encabezado">
         <div className="logo">
           🎬 Mi <span>Cartelera</span>
@@ -191,19 +240,36 @@ function App() {
         </button>
       </header>
 
+      {/* BIENVENIDA */}
       <section className="hero">
-        <h1>Tu universo de películas y series 🍿</h1>
+        <h1>
+          Tu universo de películas y series 🍿
+        </h1>
+
         <p>
-          ¡Bienvenido! Has iniciado sesión correctamente.
+          ¡Bienvenido! Has iniciado sesión
+          correctamente.
         </p>
+
         <p className="usuario-correo">
           {session.user.email}
         </p>
       </section>
 
-      <BuscadorTMDB />
-      <MiColeccion />
+      <BuscadorTMDB
+        onColeccionActualizada={notificarCambioColeccion}
+      />
 
+      <MiColeccion
+        versionColeccion={versionColeccion}
+        onColeccionActualizada={notificarCambioColeccion}
+      />
+
+      <NocheDePelicula
+        versionColeccion={versionColeccion}
+      />
+
+      {/* FUNCIONALIDADES */}
       <section>
         <h2 className="seccion-titulo">
           ¿Qué puedes hacer aquí?
@@ -211,21 +277,55 @@ function App() {
 
         <div className="tarjetas">
           <article className="tarjeta">
-            <div className="tarjeta-icono">🔎</div>
+            <div className="tarjeta-icono">
+              🔎
+            </div>
+
             <h3>Explorar películas</h3>
-            <p>Busca películas y series de todo el mundo.</p>
+
+            <p>
+              Busca películas y series de todo
+              el mundo.
+            </p>
           </article>
 
           <article className="tarjeta">
-            <div className="tarjeta-icono">🎞️</div>
+            <div className="tarjeta-icono">
+              🎞️
+            </div>
+
             <h3>Mi colección</h3>
-            <p>Guarda lo que quieres ver y lo que ya viste.</p>
+
+            <p>
+              Guarda lo que quieres ver y
+              lo que ya viste.
+            </p>
           </article>
 
           <article className="tarjeta">
-            <div className="tarjeta-icono">⭐</div>
+            <div className="tarjeta-icono">
+              ⭐
+            </div>
+
             <h3>Mis calificaciones</h3>
-            <p>Califica tus títulos y escribe comentarios.</p>
+
+            <p>
+              Califica tus títulos y escribe
+              comentarios.
+            </p>
+          </article>
+
+          <article className="tarjeta">
+            <div className="tarjeta-icono">
+              🍿
+            </div>
+
+            <h3>Noche de película</h3>
+
+            <p>
+              Organiza sesiones con tus películas
+              pendientes y guárdalas para después.
+            </p>
           </article>
         </div>
       </section>

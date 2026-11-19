@@ -6,6 +6,7 @@ export interface PeliculaTMDB {
   id: number;
   title?: string;
   name?: string;
+  runtime?: number | null;
   poster_path: string | null;
   release_date?: string;
   first_air_date?: string;
@@ -60,6 +61,7 @@ export interface DetalleTMDB {
   id: number;
   title?: string;
   name?: string;
+  runtime?: number | null;
   overview: string;
   poster_path: string | null;
   release_date?: string;
